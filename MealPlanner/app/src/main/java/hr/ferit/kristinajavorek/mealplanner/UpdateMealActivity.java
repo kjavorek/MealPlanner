@@ -1,6 +1,5 @@
 package hr.ferit.kristinajavorek.mealplanner;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +14,9 @@ import android.widget.Toast;
 
 public class UpdateMealActivity extends AppCompatActivity {
 
-    public static final String UPDATE_FINISH="update finish";
-
     EditText etUpdateMealDay, etUpdateMealName, etUpdateMealDifficulty, etUpdateMealTime, etUpdateMealIngredients, etUpdateMealDirections;
     Button bUpdate;
+    String selectedId, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealDirectionsUpdate;
     Integer id;
 
     @Override
@@ -44,7 +42,6 @@ public class UpdateMealActivity extends AppCompatActivity {
         mealDifficultyUpdate = updateMealIntent.getStringExtra(MainActivity.DIFFICULTY_UPDATE);
         mealTimeUpdate = updateMealIntent.getStringExtra(MainActivity.TIME_UPDATE);
         mealIngredientsUpdate = updateMealIntent.getStringExtra(MainActivity.INGREDIENTS_UPDATE);
-        mealIngredientsIsCheckedUpdate = updateMealIntent.getStringExtra(MainActivity.INGREDIENTS_ISCHECKED_UPDATE);
         mealDirectionsUpdate = updateMealIntent.getStringExtra(MainActivity.DIRECTIONS_UPDATE);
 
         this.etUpdateMealDay.setText(mealDayUpdate);
@@ -69,10 +66,9 @@ public class UpdateMealActivity extends AppCompatActivity {
                     mealTimeUpdate = etUpdateMealTime.getText().toString();
                     mealIngredientsUpdate = etUpdateMealIngredients.getText().toString();
                     mealDirectionsUpdate = etUpdateMealDirections.getText().toString();
-                    DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealIngredientsIsCheckedUpdate, mealDirectionsUpdate);
+                    DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealDirectionsUpdate);
                     Intent intent = new Intent();
                     intent.setClass(getApplicationContext(), MainActivity.class);
-                    intent.putExtra(UPDATE_FINISH,1);
                     startActivity(intent);
                 }
             }

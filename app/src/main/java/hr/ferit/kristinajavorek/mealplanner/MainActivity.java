@@ -19,6 +19,23 @@ import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.HashMap;
+import static java.lang.String.valueOf;
+
+import java.util.ArrayList;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -55,7 +72,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.drawer_content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         this.lvMealList= (ListView) findViewById(R.id.lvMealList);
@@ -86,7 +102,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);  //enable colored icons in drawer
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     @Override

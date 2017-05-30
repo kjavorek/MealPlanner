@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/today_meals"
+            android:icon="@drawable/today"
+            android:title="Today meals" />
+        <item
+            android:id="@+id/today_groceries"
+            android:icon="@drawable/today_groceries"
+            android:title="Today groceries" />
+        <item
+            android:id="@+id/week_meals"
+            android:icon="@drawable/week"
+            android:title="Week meals" />
+        <item
+            android:id="@+id/week_groceries"
+            android:icon="@drawable/week_groceries"
+            android:title="Week groceries" />
+    </group>
+
+</menu>
