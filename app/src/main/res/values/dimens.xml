@@ -31,8 +31,10 @@
 
     <!--Ingredients list-->
     <dimen name="groupNameHeight">55sp</dimen>
-    <dimen name="groupNameTopPadding">20sp</dimen>
+    <dimen name="groupNameTopPadding">10sp</dimen>
+    <dimen name="groupDayTopPadding">20sp</dimen>
     <dimen name="groupNameSize">20sp</dimen>
+    <dimen name="groupDaySize">22sp</dimen>
     <dimen name="ingredientsListHeight">55sp</dimen>
     <dimen name="ingredientsListTopPadding">15sp</dimen>
     <dimen name="ingredientListTextSize">16sp</dimen>

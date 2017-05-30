@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity
             //Toast.makeText(getApplicationContext(),"week_meals", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.week_groceries) {
             todayMeal=false; todayGroceries=false; weekMeal=false; weekGroceries=true;
+            weekGroceriesFunction();
             Toast.makeText(getApplicationContext(),"week_groceries", Toast.LENGTH_SHORT).show();
         }
 
@@ -168,10 +169,97 @@ public class MainActivity extends AppCompatActivity
     }
     ListAdapter ingredientsAdapter;
     List<String> groceriesList = new ArrayList<String>();
+    //List<String> groceriesWeekList = new ArrayList<String>();
     List<Integer> mealNameList = new ArrayList<Integer>();
+    //List<Integer> mealNameWeekList = new ArrayList<Integer>();
+    List<Integer> mealWeekDayList = new ArrayList<Integer>();
+    List<Integer> mealInMealsList = new ArrayList<Integer>();
     List<String> isChecked = new ArrayList<String>();
-    String today;
+    String today, previousWeekDay="";
 
+    private void weekGroceriesFunction(){
+        fab.setVisibility(INVISIBLE);
+        String mealName, weekDay="";
+        ArrayList<Meal> tuesdayList=new ArrayList<Meal>(), wednesdayList=new ArrayList<Meal>(),
+                thursdayList=new ArrayList<Meal>(), fridayList=new ArrayList<Meal>(),
+                saturdayList=new ArrayList<Meal>(), sundayList=new ArrayList<Meal>();
+        ArrayList<Integer> mondayMealsList=new ArrayList<Integer>(),tuesdayMealsList=new ArrayList<Integer>(),
+                wednesdayMealsList=new ArrayList<Integer>(),thursdayMealsList=new ArrayList<Integer>(),
+                fridayMealsList=new ArrayList<Integer>(), saturdayMealsList=new ArrayList<Integer>(), sundayMealsList=new ArrayList<Integer>();
+        if (groceriesList.size()>0) groceriesList.clear();
+        if (mealNameList.size()>0) mealNameList.clear();
+        if(mealWeekDayList.size()>0) mealWeekDayList.clear();
+        if (isChecked.size()>0) isChecked.clear();
+        if(mealInMealsList.size()>0) mealInMealsList.clear();
+        for(int i=0;i<meals.size();i++) {
+            if (meals.get(i).getmDay().equals("Monday")) {
+                weekDay="Monday";
+                mondayMealsList.add(i);
+                addMealToList(i, weekDay);
+            } else if (meals.get(i).getmDay().equals("Tuesday")) {
+                tuesdayMealsList.add(i);
+                tuesdayList.add(meals.get(i));
+            } else if (meals.get(i).getmDay().equals("Wednesday")) {
+                wednesdayMealsList.add(i);
+                wednesdayList.add(meals.get(i));
+            } else if (meals.get(i).getmDay().equals("Thursday")) {
+                thursdayMealsList.add(i);
+                thursdayList.add(meals.get(i));
+            } else if (meals.get(i).getmDay().equals("Friday")) {
+                fridayMealsList.add(i);
+                fridayList.add(meals.get(i));
+            } else if (meals.get(i).getmDay().equals("Saturday")) {
+                saturdayMealsList.add(i);
+                saturdayList.add(meals.get(i));
+            } else {
+                sundayMealsList.add(i);
+                sundayList.add(meals.get(i));
+            }
+        }
+        for (int i=0;i<tuesdayList.size();i++){
+            weekDay="Tuesday";
+            addMealToList(tuesdayMealsList.get(i), weekDay);
+        }
+        for (int i=0;i<wednesdayList.size();i++){
+            weekDay="Wednesday";
+            addMealToList(wednesdayMealsList.get(i), weekDay);
+        }
+        for (int i=0;i<thursdayList.size();i++){
+            weekDay="Thursday";
+            addMealToList(thursdayMealsList.get(i), weekDay);
+        }
+        for (int i=0;i<fridayList.size();i++){
+            weekDay="Friday";
+            addMealToList(fridayMealsList.get(i), weekDay);
+        }
+        for (int i=0;i<saturdayList.size();i++){
+            weekDay="Saturday";
+            addMealToList(saturdayMealsList.get(i), weekDay);
+        }
+        for (int i=0;i<sundayList.size();i++){
+            weekDay="Sunday";
+            addMealToList(sundayMealsList.get(i), weekDay);
+        }
+        ingredientsAdapter = new IngredientsAdapter(groceriesList, mealNameList, isChecked, mealWeekDayList);
+        this.lvMealList.setAdapter(ingredientsAdapter);
+    }
+    private void addMealToList(Integer i, String weekDay){
+        String ingredients;
+        if(previousWeekDay!=weekDay){
+            groceriesList.add(weekDay);
+            isChecked.add(weekDay);
+            previousWeekDay=weekDay;
+            mealWeekDayList.add(groceriesList.size()-1);
+        }
+        mealInMealsList.add(i);
+        mealName=meals.get(i).getmName();
+        groceriesList.add(mealName);
+        isChecked.add(mealName);
+        mealNameList.add(groceriesList.size()-1);
+        isChecked.addAll(Arrays.asList(meals.get(i).getmIngredientsIsChecked().split("\\s*,\\s*")));
+        ingredients=meals.get(i).getmIngredients();
+        groceriesList.addAll(Arrays.asList(ingredients.split("\\s*,\\s*")));
+    }
     private void todayGroceriesFunction(){
         fab.setVisibility(INVISIBLE);
         String ingredients, mealName;
@@ -179,12 +267,14 @@ public class MainActivity extends AppCompatActivity
         if (groceriesList.size()>0) groceriesList.clear();
         if (mealNameList.size()>0) mealNameList.clear();
         if (isChecked.size()>0) isChecked.clear();
+        if(mealInMealsList.size()>0) mealInMealsList.clear();
         for(int i=0;i<meals.size();i++){
             if(meals.get(i).getmDay().equals(today)){
+                mealInMealsList.add(i); //Meal position in meals list
                 mealName=meals.get(i).getmName();
                 groceriesList.add(mealName);
                 isChecked.add(mealName);
-                mealNameList.add(groceriesList.size()-1);
+                mealNameList.add(groceriesList.size()-1); //Meal position in groceries list
                 isChecked.addAll(Arrays.asList(meals.get(i).getmIngredientsIsChecked().split("\\s*,\\s*")));
                 ingredients=meals.get(i).getmIngredients();
                 groceriesList.addAll(Arrays.asList(ingredients.split("\\s*,\\s*")));
@@ -197,14 +287,16 @@ public class MainActivity extends AppCompatActivity
         CheckBox checkBox = (CheckBox) v;
         CharSequence p=checkBox.getHint(); //Item position in a groceries list
         Integer itemPosition = Integer.parseInt(p.toString());
-        Integer positionInMealsList = 0;
+        Integer positionInGroceriesList = 0, positionInMealsList = 0;
 
         String cliked = groceriesList.get(itemPosition);
 
-        //Find meal which ingredient is clicked
+        //Find meal (which ingredient is clicked) in groceries list
         for(int i=0;i<mealNameList.size();i++){
-            if(mealNameList.get(i)<itemPosition) positionInMealsList=i;
+            if(mealNameList.get(i)<itemPosition) positionInGroceriesList=i;
         }
+        //Get position of the meal in meals list
+        positionInMealsList = mealInMealsList.get(positionInGroceriesList);
         Meal checkedMeal = meals.get(positionInMealsList);
         String ingredients=checkedMeal.getmIngredients();
 
