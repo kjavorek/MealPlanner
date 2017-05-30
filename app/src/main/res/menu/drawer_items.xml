@@ -8,7 +8,7 @@
             android:title="Today meals" />
         <item
             android:id="@+id/today_groceries"
-            android:icon="@drawable/today"
+            android:icon="@drawable/today_groceries"
             android:title="Today groceries" />
         <item
             android:id="@+id/week_meals"
@@ -16,7 +16,7 @@
             android:title="Week meals" />
         <item
             android:id="@+id/week_groceries"
-            android:icon="@drawable/week"
+            android:icon="@drawable/week_groceries"
             android:title="Week groceries" />
     </group>
 

@@ -5,4 +5,41 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <!--Adding new meal-->
+    <string name="addMeal">+ Add new meal</string>
+    <string name="addMealNameHint">Meal name</string>
+    <string name="addBtn">Add meal</string>
+
+    <string name="enterTitle">Name</string>
+    <string name="enterDifficulty">Difficulty</string>
+    <string name="Save">Save</string>
+    <string name="addMealIngredientsHint">Ingredients: milk,salt,...</string>
+    <string name="addMealDirectionsHint">Directions</string>
+
+    <string-array name="day">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+    <string-array name="difficulty">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+    <string-array name="time">
+        <item>10 min</item>
+        <item>20 min</item>
+        <item>30 min</item>
+        <item>40 min</item>
+        <item>50 min</item>
+        <item>1h</item>
+        <item>1h 30min</item>
+        <item>2h</item>
+        <item>2h 30min</item>
+        <item>3h</item>
+    </string-array>
 </resources>
