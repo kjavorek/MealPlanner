@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class Adapter extends BaseAdapter {
     private ArrayList<Meal> mMeals;
@@ -31,12 +33,12 @@ public class Adapter extends BaseAdapter {
             mealViewHolder = (ViewHolder) convertView.getTag();
         }
         Meal meal = this.mMeals.get(position);
-        mealViewHolder.tvItemDay.setText(meal.getmDay());
+        //mealViewHolder.tvItemDay.setText(meal.getmDay());
         mealViewHolder.tvItemName.setText(meal.getmName());
         mealViewHolder.tvItemDifficulty.setText(meal.getmDifficulty());
         mealViewHolder.tvItemTime.setText(meal.getmTime());
-        mealViewHolder.tvItemIngredients.setText(meal.getmIngredients());
-        mealViewHolder.tvItemDirections.setText(meal.getmDirections());
+        //mealViewHolder.tvItemIngredients.setText(meal.getmIngredients());
+        //mealViewHolder.tvItemDirections.setText(meal.getmDirections());
         return convertView;
     }
     public void insert(Meal meal) {
@@ -47,12 +49,12 @@ public class Adapter extends BaseAdapter {
         public TextView tvItemDay, tvItemName, tvItemDifficulty, tvItemTime, tvItemIngredients, tvItemDirections;
         public ImageView ivPriority, ivPriorityLine;
         public ViewHolder(View mealView) {
-            tvItemDay = (TextView) mealView.findViewById(R.id.tvItemDay);
+            //tvItemDay = (TextView) mealView.findViewById(R.id.tvItemDay);
             tvItemName = (TextView) mealView.findViewById(R.id.tvItemName);
             tvItemDifficulty = (TextView) mealView.findViewById(R.id.tvItemDifficulty);
             tvItemTime = (TextView) mealView.findViewById(R.id.tvItemTime);
-            tvItemIngredients = (TextView) mealView.findViewById(R.id.tvItemIngredients);
-            tvItemDirections = (TextView) mealView.findViewById(R.id.tvItemDirections);
+            //tvItemIngredients = (TextView) mealView.findViewById(R.id.tvItemIngredients);
+            //tvItemDirections = (TextView) mealView.findViewById(R.id.tvItemDirections);
         }
     }
     public void deleteAt(int position) {

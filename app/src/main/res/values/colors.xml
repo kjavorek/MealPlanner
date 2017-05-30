@@ -11,4 +11,5 @@
     <color name="transparent">#55000000</color>
     <color name="light_gray">#eee</color>
     <color name="dark_blue">#012389</color>
+    <color name="med_gray">#555</color>
 </resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ingredientsListHeight"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+    <CheckBox
+        android:id="@+id/cbIngredientList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/ingredientListTextSize"
+        android:paddingLeft="@dimen/item_lPadding"
+        android:paddingRight="@dimen/item_rPadding"
+        android:paddingTop="@dimen/ingredientsListTopPadding"
+        android:textColor="@color/white"
+        android:clickable="true"
+        android:onClick="handleCheckBoxOnClick"/>
+</LinearLayout>

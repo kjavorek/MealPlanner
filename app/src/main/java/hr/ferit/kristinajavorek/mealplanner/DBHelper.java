@@ -24,7 +24,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return mMealDBHelper;
     }
     @Override
-    public void onCreate(SQLiteDatabase db) { db.execSQL(CREATE_TABLE_MY_MEALS); }
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_TABLE_MY_MEALS);
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DROP_TABLE_MY_MEALS);
@@ -34,11 +36,11 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String CREATE_TABLE_MY_MEALS = "CREATE TABLE " + Schema.TABLE_MY_MEALS +
             " (" + Schema.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + Schema.DAY + " TEXT," +
             Schema.NAME + " TEXT," + Schema.DIFFICULTY + " TEXT," +  Schema.TIME + " TEXT,"
-            + Schema.INGREDIENTS + " TEXT," + Schema.DIRECTIONS + " TEXT);";
+            + Schema.INGREDIENTS + " TEXT," + Schema.INGREDIENTS_ISCHECKED + " TEXT," + Schema.DIRECTIONS + " TEXT);";
     static final String DROP_TABLE_MY_MEALS = "DROP TABLE IF EXISTS " + Schema.TABLE_MY_MEALS;
     static final String SELECT_ALL_MEALS="SELECT " + Schema.DAY + "," + Schema.NAME + "," +
-            Schema.DIFFICULTY + "," + Schema.TIME + "," + Schema.INGREDIENTS + "," + Schema.DIRECTIONS
-            + "," + Schema.KEY_ID + " FROM " + Schema.TABLE_MY_MEALS;
+            Schema.DIFFICULTY + "," + Schema.TIME + "," + Schema.INGREDIENTS + "," + Schema.INGREDIENTS_ISCHECKED + ","
+            + Schema.DIRECTIONS + "," + Schema.KEY_ID + " FROM " + Schema.TABLE_MY_MEALS;
 
     public Long insertMeal(Meal meal){
         ContentValues contentValues = new ContentValues();
@@ -47,6 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.DIFFICULTY, meal.getmDifficulty());
         contentValues.put(Schema.TIME, meal.getmTime());
         contentValues.put(Schema.INGREDIENTS, meal.getmIngredients());
+        contentValues.put(Schema.INGREDIENTS_ISCHECKED, meal.getmIngredientsIsChecked());
         contentValues.put(Schema.DIRECTIONS, meal.getmDirections());
         SQLiteDatabase writeableDatabase = this.getWritableDatabase();
         long id = writeableDatabase.insert(Schema.TABLE_MY_MEALS, Schema.DIFFICULTY, contentValues);
@@ -54,7 +57,16 @@ public class DBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public  void updateMeal(int mId, String day, String name, String difficulty, String time, String ingredients, String directions){
+    public void updateIngredientsIsChecked(int mId, String isChecked){
+        String[] id = new String[]{Integer.toString(mId)};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.INGREDIENTS_ISCHECKED,isChecked);
+        SQLiteDatabase writeableDatabase = this.getWritableDatabase();
+        writeableDatabase.update(Schema.TABLE_MY_MEALS,contentValues,Schema.KEY_ID+"=?",id);
+        writeableDatabase.close();
+    }
+
+    public  void updateMeal(int mId, String day, String name, String difficulty, String time, String ingredients, String ingredientsIsChecked, String directions){
         String[] id = new String[]{Integer.toString(mId)};
         ContentValues contentValues = new ContentValues();
         contentValues.put(Schema.DAY, day);
@@ -62,6 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.DIFFICULTY, difficulty);
         contentValues.put(Schema.TIME, time);
         contentValues.put(Schema.INGREDIENTS, ingredients);
+        contentValues.put(Schema.INGREDIENTS_ISCHECKED, ingredientsIsChecked);
         contentValues.put(Schema.DIRECTIONS, directions);
         SQLiteDatabase writeableDatabase = this.getWritableDatabase();
         writeableDatabase.update(Schema.TABLE_MY_MEALS,contentValues,Schema.KEY_ID+"=?",id);
@@ -72,10 +85,6 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] id = new String[]{Integer.toString(mId)};
         SQLiteDatabase writeableDatabase = this.getWritableDatabase();
         writeableDatabase.delete(Schema.TABLE_MY_MEALS, Schema.KEY_ID + "=?", id);
-        //writeableDatabase.execSQL("delete from sqlite_sequence where name='my_tasks'");
-        //String query = "DELETE FROM my_tasks WHERE title=5";
-        //writeableDatabase.execSQL(query);
-        //writeableDatabase.delete(Schema.TABLE_MY_TASKS, null, null); //delete all from table
         writeableDatabase.close();
     }
     public ArrayList<Meal> getAllMeals(){
@@ -89,9 +98,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 String difficulty = mealCursor.getString(2);
                 String time = mealCursor.getString(3);
                 String ingredients = mealCursor.getString(4);
-                String directions = mealCursor.getString(5);
-                int id = mealCursor.getInt(6);
-                meals.add(new Meal(id, day, name, difficulty, time, ingredients, directions));
+                String ingredientsIsChecked = mealCursor.getString(5);
+                String directions = mealCursor.getString(6);
+                int id = mealCursor.getInt(7);
+                meals.add(new Meal(id, day, name, difficulty, time, ingredients, ingredientsIsChecked, directions));
             }while(mealCursor.moveToNext());
         }
         mealCursor.close();
@@ -100,14 +110,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     public static class Schema{
         private static final int SCHEMA_VERSION = 1;
-        private static final String DATABASE_NAME = "mymeal3.db";
+        private static final String DATABASE_NAME = "mymeal6.db";
         private static final String KEY_ID = "id";
-        static final String TABLE_MY_MEALS = "my_meals3";
+        static final String TABLE_MY_MEALS = "my_meals6";
         static final String DAY = "day";
         static final String NAME = "name";
         static final String DIFFICULTY = "difficulty";
         static final String TIME = "time";
         static final String INGREDIENTS = "ingredients";
+        static final String INGREDIENTS_ISCHECKED = "IsChecked";
         static final String DIRECTIONS = "directions";
     }
 }

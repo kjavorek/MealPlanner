@@ -12,7 +12,8 @@
     <dimen name="nav_padding">58sp</dimen>
     <dimen name="nav_left_padding">90sp</dimen>
     <dimen name="dividerHeight">5sp</dimen>
-    <dimen name="NameSize">16sp</dimen>
+    <dimen name="NameSize">18sp</dimen>
+    <dimen name="AddNameSize">22sp</dimen>
     <dimen name="item_lPadding">5sp</dimen>
     <dimen name="item_rPadding">5sp</dimen>
 
@@ -23,4 +24,19 @@
     <dimen name="button_size">50sp</dimen>
     <dimen name="text_size">16sp</dimen>
     <dimen name="list_margin">10sp</dimen>
+    <dimen name="nameTBPadding">7sp</dimen>
+    <dimen name="add_meal_l_r_padding">7sp</dimen>
+    <dimen name="add_ingredients_text">20sp</dimen>
+    <dimen name="button_margin">40sp</dimen>
+
+    <!--Ingredients list-->
+    <dimen name="groupNameHeight">55sp</dimen>
+    <dimen name="groupNameTopPadding">10sp</dimen>
+    <dimen name="groupDayTopPadding">20sp</dimen>
+    <dimen name="groupNameSize">20sp</dimen>
+    <dimen name="groupDaySize">22sp</dimen>
+    <dimen name="ingredientsListHeight">55sp</dimen>
+    <dimen name="ingredientsListTopPadding">15sp</dimen>
+    <dimen name="ingredientListTextSize">16sp</dimen>
+
 </resources>
