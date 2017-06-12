@@ -15,6 +15,7 @@
     <string name="Save">Save</string>
     <string name="addMealIngredientsHint">Ingredients: milk,salt,...</string>
     <string name="addMealDirectionsHint">Directions</string>
+    <string name="updateMeal">Update meal</string>
 
     <string-array name="day">
         <item>Monday</item>
