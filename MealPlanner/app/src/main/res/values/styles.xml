@@ -1,0 +1,29 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/purple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/purple</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--Drawer style-->
+    <style name="NavigationTheme" parent="AppTheme">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:layout_marginBottom">15sp</item>
+        <item name="android:listPreferredItemHeightSmall">80sp</item>
+        <item name="listPreferredItemHeightLarge">80sp</item>
+    </style>
+
+</resources>
