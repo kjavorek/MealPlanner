@@ -18,6 +18,18 @@
             android:id="@+id/week_groceries"
             android:icon="@drawable/week_groceries"
             android:title="Week groceries" />
+        <item
+            android:id="@+id/past_weeks"
+            android:icon="@drawable/past_weeks"
+            android:title="Past weeks" />
+        <item
+            android:id="@+id/facebook_post"
+            android:icon="@drawable/facebook"
+            android:title="Post on Facebook" />
+        <item
+            android:id="@+id/recipes"
+            android:icon="@drawable/recipes"
+            android:title="Recipes" />
     </group>
 
 </menu>

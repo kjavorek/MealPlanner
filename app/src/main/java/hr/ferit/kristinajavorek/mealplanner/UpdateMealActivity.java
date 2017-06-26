@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
     public static final String UPDATE_FINISH="update finish";
 
     EditText etUpdateMealName, etUpdateMealDirections, etIngredients;
+    TextView tvUpdateMealLayout;
     Button bUpdate;
     String selectedId, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate,mealIngredients, mealIngredientsIsChecked, mealDirectionsUpdate;
     Integer id;
@@ -34,6 +36,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
     LinearLayout activity_update_meal;
     String mealIngredientsUpdate = "", mealIngredientsIsCheckedUpdate = "";
     Integer etId = 0;
+    Boolean pastWeek = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
         this.previousIsChecked = new ArrayList<String>();
 
         this.etUpdateMealName = (EditText) this.findViewById(R.id.etUpdateMealName);
+        this.tvUpdateMealLayout = (TextView) findViewById(R.id.tvUpdateMealLayout);
         this.updateDaySpinner = (Spinner) findViewById(R.id.updateDaySpinner);
         this.updateDifficultySpinner = (Spinner) findViewById(R.id.updateDifficultySpinner);
         this.updateTimeSpinner = (Spinner) findViewById(R.id.updateTimeSpinner);
@@ -64,6 +68,11 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
         mealIngredients = updateMealIntent.getStringExtra(MainActivity.INGREDIENTS_UPDATE);
         mealIngredientsIsChecked = updateMealIntent.getStringExtra(MainActivity.INGREDIENTS_ISCHECKED_UPDATE);
         mealDirectionsUpdate = updateMealIntent.getStringExtra(MainActivity.DIRECTIONS_UPDATE);
+        if (updateMealIntent.hasExtra(MainActivity.PAST_WEEK)) {
+            pastWeek = true;
+        }
+
+        if(pastWeek) tvUpdateMealLayout.setText("Past week");
 
         ArrayAdapter<CharSequence> daysAdapter = ArrayAdapter.createFromResource(this, R.array.day, android.R.layout.simple_spinner_dropdown_item);
         daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -72,9 +81,11 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
             int spinnerPosition = daysAdapter.getPosition(mealDayUpdate);
             updateDaySpinner.setSelection(spinnerPosition);
         }
+        if(pastWeek) updateDaySpinner.setEnabled(false);
 
         this.etUpdateMealName.setText(mealNameUpdate);
         etUpdateMealName.setSelection(etUpdateMealName.length());
+        if(pastWeek) etUpdateMealName.setEnabled(false);
 
         ArrayAdapter<CharSequence> difficultyAdapter = ArrayAdapter.createFromResource(this, R.array.difficulty, android.R.layout.simple_spinner_dropdown_item);
         difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -83,6 +94,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
             int spinnerPosition = difficultyAdapter.getPosition(mealDifficultyUpdate);
             updateDifficultySpinner.setSelection(spinnerPosition);
         }
+        if(pastWeek) updateDifficultySpinner.setEnabled(false);
 
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(this, R.array.time, android.R.layout.simple_spinner_dropdown_item);
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -91,6 +103,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
             int spinnerPosition = timeAdapter.getPosition(mealTimeUpdate);
             updateTimeSpinner.setSelection(spinnerPosition);
         }
+        if(pastWeek) updateTimeSpinner.setEnabled(false);
 
         previousIngredients.addAll(Arrays.asList(mealIngredients.split("\\s*,\\s*")));
         previousIsChecked.addAll(Arrays.asList(mealIngredientsIsChecked.split("\\s*,\\s*")));
@@ -106,55 +119,64 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
             etIngredients.setPadding(30, 2, 2, 15);
             etIngredients.setMaxLines(1);
             etIngredients.setOnLongClickListener(this);
-            etIngredients.requestFocus();
+            if(!pastWeek) etIngredients.requestFocus();
+            else getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             activity_update_meal.addView(etIngredients, 6 + etId);
             etId++;
+            if(pastWeek) etIngredients.setEnabled(false);
         }
 
         this.etUpdateMealDirections.setText(mealDirectionsUpdate);
         id=Integer.parseInt(selectedId);
+        if(pastWeek) etUpdateMealDirections.setEnabled(false);
 
+        if(pastWeek) bUpdate.setText("Back");
         this.bUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context = getApplicationContext();
-                if(etUpdateMealName.getText().toString().matches("")){
-                    Toast.makeText(context,"Nothing to update.", Toast.LENGTH_SHORT).show();
-                }else {
-                    mealDayUpdate = updateDaySpinner.getSelectedItem().toString();
-                    mealNameUpdate = etUpdateMealName.getText().toString();
-                    mealDifficultyUpdate = updateDifficultySpinner.getSelectedItem().toString();
-                    mealTimeUpdate = updateTimeSpinner.getSelectedItem().toString();
+                if(pastWeek){
+                    Intent mainActivityIntent = new Intent();
+                    mainActivityIntent.setClass(getApplicationContext(), MainActivity.class);
+                    startActivity(mainActivityIntent);
+                }
+                else {
+                    Context context = getApplicationContext();
+                    if (etUpdateMealName.getText().toString().matches("")) {
+                        Toast.makeText(context, "Nothing to update.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mealDayUpdate = updateDaySpinner.getSelectedItem().toString();
+                        mealNameUpdate = etUpdateMealName.getText().toString();
+                        mealDifficultyUpdate = updateDifficultySpinner.getSelectedItem().toString();
+                        mealTimeUpdate = updateTimeSpinner.getSelectedItem().toString();
 
-                    mealIngredientsUpdate="";
-                    for(int i=0; i<ingredientsList.size();i++){
-                        if(!ingredientsList.get(i).getText().equals(null) || !ingredientsList.get(i).getText().equals(" ")) {
-                            if (mealIngredientsUpdate == "") {
-                                mealIngredientsUpdate = ingredientsList.get(i).getText().toString();
-                                if(previousIngredients.size()>i) {
-                                    if (ingredientsList.get(i).getText().toString().equals(previousIngredients.get(i))) {
-                                        mealIngredientsIsCheckedUpdate = previousIsChecked.get(i);
+                        mealIngredientsUpdate = "";
+                        for (int i = 0; i < ingredientsList.size(); i++) {
+                            if (!ingredientsList.get(i).getText().equals(null) || !ingredientsList.get(i).getText().equals(" ")) {
+                                if (mealIngredientsUpdate == "") {
+                                    mealIngredientsUpdate = ingredientsList.get(i).getText().toString();
+                                    if (previousIngredients.size() > i) {
+                                        if (ingredientsList.get(i).getText().toString().equals(previousIngredients.get(i))) {
+                                            mealIngredientsIsCheckedUpdate = previousIsChecked.get(i);
+                                        } else mealIngredientsIsCheckedUpdate = "0";
                                     } else mealIngredientsIsCheckedUpdate = "0";
-                                }
-                                else mealIngredientsIsCheckedUpdate = "0";
-                            } else {
-                                mealIngredientsUpdate += "," + ingredientsList.get(i).getText().toString();
-                                if(previousIngredients.size()>i) {
-                                    if (ingredientsList.get(i).getText().toString().equals(previousIngredients.get(i))) {
-                                        mealIngredientsIsCheckedUpdate += "," + previousIsChecked.get(i);
+                                } else {
+                                    mealIngredientsUpdate += "," + ingredientsList.get(i).getText().toString();
+                                    if (previousIngredients.size() > i) {
+                                        if (ingredientsList.get(i).getText().toString().equals(previousIngredients.get(i))) {
+                                            mealIngredientsIsCheckedUpdate += "," + previousIsChecked.get(i);
+                                        } else mealIngredientsIsCheckedUpdate += "," + "0";
                                     } else mealIngredientsIsCheckedUpdate += "," + "0";
                                 }
-                                else mealIngredientsIsCheckedUpdate += "," + "0";
                             }
                         }
-                    }
 
-                    mealDirectionsUpdate = etUpdateMealDirections.getText().toString();
-                    DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealIngredientsIsCheckedUpdate, mealDirectionsUpdate);
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), MainActivity.class);
-                    intent.putExtra(UPDATE_FINISH,1);
-                    startActivity(intent);
+                        mealDirectionsUpdate = etUpdateMealDirections.getText().toString();
+                        DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealIngredientsIsCheckedUpdate, mealDirectionsUpdate);
+                        Intent intent = new Intent();
+                        intent.setClass(getApplicationContext(), MainActivity.class);
+                        intent.putExtra(UPDATE_FINISH, 1);
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -162,29 +184,33 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
 
     public void handleOnClick(View view)
     {
-        activity_update_meal = (LinearLayout)findViewById(R.id.activity_update_meal);
-        etIngredients = new EditText(this);
-        ingredientsList.add(etIngredients);
-        etIngredients.setId(etId);
-        etIngredients.setHint("Add ingredient");
-        etIngredients.setHintTextColor(Color.rgb(85,85,85));
-        etIngredients.setTextColor(Color.WHITE);
-        etIngredients.setPadding(30, 2, 2, 15);
-        etIngredients.setMaxLines(1);
-        etIngredients.setOnLongClickListener(this);
-        etIngredients.requestFocus();
-        activity_update_meal.addView(etIngredients, 6+etId);
-        etId++;
+        if(!pastWeek) {
+            activity_update_meal = (LinearLayout) findViewById(R.id.activity_update_meal);
+            etIngredients = new EditText(this);
+            ingredientsList.add(etIngredients);
+            etIngredients.setId(etId);
+            etIngredients.setHint("Add ingredient");
+            etIngredients.setHintTextColor(Color.rgb(85, 85, 85));
+            etIngredients.setTextColor(Color.WHITE);
+            etIngredients.setPadding(30, 2, 2, 15);
+            etIngredients.setMaxLines(1);
+            etIngredients.setOnLongClickListener(this);
+            if(!pastWeek) etIngredients.requestFocus();
+            activity_update_meal.addView(etIngredients, 6 + etId);
+            etId++;
+        }
     }
 
     @Override
     public boolean onLongClick(View v) {
-        //Removing inserted ingredient from the list after long click
-        for(int i=0; i<ingredientsList.size();i++){
-            if (ingredientsList.get(i).getId() == v.getId()){
-                this.ingredientsList.remove(i);
-                activity_update_meal.removeView(activity_update_meal.getChildAt(i+6));
-                etId=ingredientsList.size();
+        if(!pastWeek) {
+            //Removing inserted ingredient from the list after long click
+            for (int i = 0; i < ingredientsList.size(); i++) {
+                if (ingredientsList.get(i).getId() == v.getId()) {
+                    this.ingredientsList.remove(i);
+                    activity_update_meal.removeView(activity_update_meal.getChildAt(i + 6));
+                    etId = ingredientsList.size();
+                }
             }
         }
         return true;

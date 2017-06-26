@@ -36,11 +36,13 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String CREATE_TABLE_MY_MEALS = "CREATE TABLE " + Schema.TABLE_MY_MEALS +
             " (" + Schema.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + Schema.DAY + " TEXT," +
             Schema.NAME + " TEXT," + Schema.DIFFICULTY + " TEXT," +  Schema.TIME + " TEXT,"
-            + Schema.INGREDIENTS + " TEXT," + Schema.INGREDIENTS_ISCHECKED + " TEXT," + Schema.DIRECTIONS + " TEXT);";
+            + Schema.INGREDIENTS + " TEXT," + Schema.INGREDIENTS_ISCHECKED + " TEXT," + Schema.DIRECTIONS + " TEXT,"
+            + Schema.WEEK_NUM + " TEXT," + Schema.FIRST_DAY + " TEXT);";
     static final String DROP_TABLE_MY_MEALS = "DROP TABLE IF EXISTS " + Schema.TABLE_MY_MEALS;
     static final String SELECT_ALL_MEALS="SELECT " + Schema.DAY + "," + Schema.NAME + "," +
             Schema.DIFFICULTY + "," + Schema.TIME + "," + Schema.INGREDIENTS + "," + Schema.INGREDIENTS_ISCHECKED + ","
-            + Schema.DIRECTIONS + "," + Schema.KEY_ID + " FROM " + Schema.TABLE_MY_MEALS;
+            + Schema.DIRECTIONS + "," + Schema.WEEK_NUM + "," + Schema.FIRST_DAY + ","+ Schema.KEY_ID
+            + " FROM " + Schema.TABLE_MY_MEALS;
 
     public Long insertMeal(Meal meal){
         ContentValues contentValues = new ContentValues();
@@ -51,6 +53,8 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.INGREDIENTS, meal.getmIngredients());
         contentValues.put(Schema.INGREDIENTS_ISCHECKED, meal.getmIngredientsIsChecked());
         contentValues.put(Schema.DIRECTIONS, meal.getmDirections());
+        contentValues.put(Schema.WEEK_NUM, meal.getmWeekNum());
+        contentValues.put(Schema.FIRST_DAY, meal.getmWeekFirstDay());
         SQLiteDatabase writeableDatabase = this.getWritableDatabase();
         long id = writeableDatabase.insert(Schema.TABLE_MY_MEALS, Schema.DIFFICULTY, contentValues);
         writeableDatabase.close();
@@ -100,8 +104,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 String ingredients = mealCursor.getString(4);
                 String ingredientsIsChecked = mealCursor.getString(5);
                 String directions = mealCursor.getString(6);
-                int id = mealCursor.getInt(7);
-                meals.add(new Meal(id, day, name, difficulty, time, ingredients, ingredientsIsChecked, directions));
+                String week_num = mealCursor.getString(7);
+                String week_first_day = mealCursor.getString(8);
+                int id = mealCursor.getInt(9);
+                meals.add(new Meal(id, day, name, difficulty, time, ingredients, ingredientsIsChecked, directions, week_num, week_first_day));
             }while(mealCursor.moveToNext());
         }
         mealCursor.close();
@@ -110,9 +116,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     public static class Schema{
         private static final int SCHEMA_VERSION = 1;
-        private static final String DATABASE_NAME = "mymeal6.db";
+        private static final String DATABASE_NAME = "week_planner.db";
         private static final String KEY_ID = "id";
-        static final String TABLE_MY_MEALS = "my_meals6";
+        static final String TABLE_MY_MEALS = "week_meals";
         static final String DAY = "day";
         static final String NAME = "name";
         static final String DIFFICULTY = "difficulty";
@@ -120,5 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String INGREDIENTS = "ingredients";
         static final String INGREDIENTS_ISCHECKED = "IsChecked";
         static final String DIRECTIONS = "directions";
+        static final String WEEK_NUM = "week";
+        static final String FIRST_DAY = "first_day";
     }
 }

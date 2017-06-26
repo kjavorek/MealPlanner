@@ -19,6 +19,10 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -27,4 +31,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
     testCompile 'junit:junit:4.12'
+
+    // Android SDK
+    compile 'com.facebook.android:facebook-android-sdk:4.+'
+    // Audience Network SDK. Only versions 4.6.0 and above are available
+    //compile 'com.facebook.android:audience-network-sdk:4.+'
+    // Account Kit
+    //compile 'com.facebook.android:account-kit-sdk:4.+'
 }

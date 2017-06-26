@@ -11,6 +11,7 @@
         android:paddingLeft="@dimen/add_meal_l_r_padding"
         android:paddingRight="@dimen/add_meal_l_r_padding">
         <TextView
+            android:id="@+id/tvUpdateMealLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/updateMeal"

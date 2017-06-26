@@ -1,4 +1,6 @@
 <resources>
+    <string name="facebook_app_id">675942395909375</string>
+
     <string name="app_name">MealPlanner</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
