@@ -1,5 +1,6 @@
 <resources>
-    <string name="facebook_app_id">675942395909375</string>
+    <string name="facebook_app_id">145355266017216</string>
+    <string name="fb_login_protocol_scheme">fb145355266017216</string>
 
     <string name="app_name">MealPlanner</string>
 
@@ -18,6 +19,8 @@
     <string name="addMealIngredientsHint">Ingredients: milk,salt,...</string>
     <string name="addMealDirectionsHint">Directions</string>
     <string name="updateMeal">Update meal</string>
+    <string name="notification_btn">Set notification</string>
+    <string name="notification_tv">Set time for ingredients daily reminder</string>
 
     <string-array name="day">
         <item>Monday</item>

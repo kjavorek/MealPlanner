@@ -39,5 +39,6 @@
     <dimen name="ingredientsListTopPadding">15sp</dimen>
     <dimen name="ingredientListTextSize">16sp</dimen>
     <dimen name="recipes_T_B_padding">21sp</dimen>
+    <dimen name="notification_T_margin">14sp</dimen>
 
 </resources>

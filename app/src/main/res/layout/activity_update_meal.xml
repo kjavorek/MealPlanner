@@ -14,7 +14,7 @@
             android:id="@+id/tvUpdateMealLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/updateMeal"
+            android:text="Update meal"
             android:textSize="@dimen/AddNameSize"
             android:textStyle="bold"
             android:paddingTop="@dimen/nameTBPadding"

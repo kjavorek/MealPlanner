@@ -134,6 +134,7 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
         this.bUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean comma = false;
                 if(pastWeek){
                     Intent mainActivityIntent = new Intent();
                     mainActivityIntent.setClass(getApplicationContext(), MainActivity.class);
@@ -167,15 +168,18 @@ public class UpdateMealActivity extends AppCompatActivity implements View.OnLong
                                         } else mealIngredientsIsCheckedUpdate += "," + "0";
                                     } else mealIngredientsIsCheckedUpdate += "," + "0";
                                 }
+                                if(ingredientsList.get(i).getText().toString().contains(",")) comma = true;
                             }
                         }
-
                         mealDirectionsUpdate = etUpdateMealDirections.getText().toString();
-                        DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealIngredientsIsCheckedUpdate, mealDirectionsUpdate);
-                        Intent intent = new Intent();
-                        intent.setClass(getApplicationContext(), MainActivity.class);
-                        intent.putExtra(UPDATE_FINISH, 1);
-                        startActivity(intent);
+                        if(comma) Toast.makeText(context,"Please do not write a comma in a list of ingredients.", Toast.LENGTH_SHORT).show();
+                        else {
+                            DBHelper.getInstance(getApplicationContext()).updateMeal(id, mealDayUpdate, mealNameUpdate, mealDifficultyUpdate, mealTimeUpdate, mealIngredientsUpdate, mealIngredientsIsCheckedUpdate, mealDirectionsUpdate);
+                            Intent intent = new Intent();
+                            intent.setClass(getApplicationContext(), MainActivity.class);
+                            intent.putExtra(UPDATE_FINISH, 1);
+                            startActivity(intent);
+                        }
                     }
                 }
             }

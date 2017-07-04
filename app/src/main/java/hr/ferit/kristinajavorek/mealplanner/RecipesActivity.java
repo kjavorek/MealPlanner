@@ -47,27 +47,36 @@ public class RecipesActivity extends Activity {
     public static final String TITLE = "Title";
     public static final String LINK = "Link";
     public static final String INGREDIENTS= "Ingredients";
+    public static final String WEEK_DAY = "This day";
+    public static final String WEEK_NUM = "Week number";
 
     ListView listcomp=null;
     RecipesAdapter adapt_obj=null;
     Context myref=null;
     private SwipeRefreshLayout swipeContainer;
     boolean created=false;
-    Button bBack;
+    Button bBackRecipes;
+    String weekDay="", weekNum="";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
         listcomp = (ListView) findViewById(R.id.mylistview);
-        bBack= (Button) findViewById(R.id.bBack);
-        bBack.setOnClickListener(new Button.OnClickListener() {
+        bBackRecipes= (Button) findViewById(R.id.bBackRecipes);
+        bBackRecipes.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent mainActivityIntent = new Intent();
                 mainActivityIntent.setClass(getApplicationContext(), MainActivity.class);
                 startActivity(mainActivityIntent);
             }
         });
+
+        Intent mainMealIntent = this.getIntent();
+        if(mainMealIntent.hasExtra(MainActivity.WEEK_NUM)) {
+            weekDay = mainMealIntent.getStringExtra(MainActivity.WEEK_DAY);
+            weekNum = mainMealIntent.getStringExtra(MainActivity.WEEK_NUM);
+        }
 
         if(isNetworkAvailable()) {
             myref = RecipesActivity.this;
@@ -177,6 +186,8 @@ public class RecipesActivity extends Activity {
                     addIntent.putExtra(TITLE, title);
                     addIntent.putExtra(LINK, link);
                     addIntent.putExtra(INGREDIENTS, ingredientsString);
+                    addIntent.putExtra(WEEK_DAY, weekDay);
+                    addIntent.putExtra(WEEK_NUM, weekNum);
                     startActivity(addIntent);
                     return true;
                 }

@@ -1,5 +1,7 @@
 package hr.ferit.kristinajavorek.mealplanner;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,7 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -76,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     public static final String WEEK_NUM = "Week number";
     public static final String INGREDIENTS_MESSAGE= "message";
     public static final String PAST_WEEK = "pastWeek";
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 0;
 
     ListView lvMealList;
     String mealDay, mealName, mealDifficulty, mealTime, mealIngredients, mealIngredientsIsChecked, mealDirections, mealWeekNum, mealWeekFirstDay;
@@ -84,6 +92,9 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
     String ingredientsToReturn="";
     String thisMondayDate="";
+    File imagesFolder;
+    Uri uriSavedImage;
+    int alarmHour, alarmMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +104,22 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         this.lvMealList= (ListView) findViewById(R.id.lvMealList);
+
+        final Intent mealIntent = this.getIntent();
+
+        //Notification set - intent
+        if(mealIntent.hasExtra(NotificationActivity.NOTIFICATION_HOUR)) {
+            alarmHour = parseInt(mealIntent.getStringExtra(NotificationActivity.NOTIFICATION_HOUR));
+            alarmMinute = parseInt(mealIntent.getStringExtra(NotificationActivity.NOTIFICATION_MINUTE));
+            Intent intent = new Intent(MainActivity.this, NotificationReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Calendar alarmCalendar = Calendar.getInstance();
+            alarmCalendar.set(Calendar.HOUR_OF_DAY, alarmHour);
+            alarmCalendar.set(Calendar.MINUTE, alarmMinute);
+            alarmCalendar.set(Calendar.SECOND, 00);
+            AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(MainActivity.this.ALARM_SERVICE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent);
+        }
 
         //Monday date
         Calendar calendar = Calendar.getInstance();
@@ -111,9 +138,8 @@ public class MainActivity extends AppCompatActivity
         thisMondayDate = df.format(calendar.getTime());
 
         //Add new meal - intent
-        final Intent mealIntent = this.getIntent();
         if(mealIntent.hasExtra(AddMealActivity.MEAL_NAME)){
-            notificationIsShown = true;
+            //notificationIsShown = true;
             mealDay = mealIntent.getStringExtra(AddMealActivity.MEAL_DAY);
             mealName = mealIntent.getStringExtra(AddMealActivity.MEAL_NAME);
             mealDifficulty = mealIntent.getStringExtra(AddMealActivity.MEAL_DIFFICULTY);
@@ -126,7 +152,7 @@ public class MainActivity extends AppCompatActivity
             Meal meal = new Meal(7, mealDay, mealName, mealDifficulty, mealTime, mealIngredients, mealIngredientsIsChecked, mealDirections, mealWeekNum, mealWeekFirstDay);
             long id = DBHelper.getInstance(getApplicationContext()).insertMeal(meal);
             meal.setmId((int)id);
-            todayMeal=false; todayGroceries=false; weekMeal=true; weekGroceries=false; pastWeekMeals=false;
+            todayMeal=true; todayGroceries=false; weekMeal=false; weekGroceries=false; pastWeekMeals=false;
         }
 
         meals = this.loadMeals();
@@ -139,28 +165,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
-                String weekNum = "";
-                if(meals.size()<1) weekNum = "1";
-                else{
-                    String previousWeekNum = meals.get(meals.size()-1).getmWeekNum();
-                    Integer pwn = Integer.parseInt(previousWeekNum);
-                    String previousFirstDay = meals.get(meals.size()-1).getmWeekFirstDay();
-                    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                    Date firstDate = null;
-                    try {
-                        firstDate = format.parse(previousFirstDay);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    Calendar c = Calendar.getInstance();
-                    Date todayDate = c.getTime();
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(firstDate);
-                    cal.add(Calendar.DATE, 7);
-                    if(todayDate.compareTo(firstDate)>=0 && todayDate.compareTo(cal.getTime())<0) weekNum = previousWeekNum;
-                    else weekNum = String.valueOf(Integer.parseInt(previousWeekNum)+1);
-                }
+                String weekNum=getWeekNum();
                 Intent addIntent = new Intent();
                 addIntent.setClass(getApplicationContext(), AddMealActivity.class);
                 if (todayMeal) addIntent.putExtra(TODAY, getDay());
@@ -179,20 +184,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);  //enable colored icons in drawer
         navigationView.setNavigationItemSelectedListener(this);
-        //Notification - intent
-        if(mealIntent.hasExtra(INGREDIENTS_MESSAGE))
+
+        //Notification alarm - intent
+        if(mealIntent.hasExtra(NotificationReceiver.NOTIFICATION))
         {
-            notificationIsShown = true;
+            //notificationIsShown = true;
             todayGroceriesFunction();
         }
         else todayMeals();
-        if(!notificationIsShown && allTodayGroceries()!="") {
+        /*if(!notificationIsShown && allTodayGroceries()!="") {
             notificationIsShown = true;
             sendNotification();
-        }
+        }*/
     }
 
-    private String allTodayGroceries(){
+    /*private String allTodayGroceries(){
         ingredientsToReturn="";
         List<String> isCheckedIngredient=new ArrayList<String>(), ingredient=new ArrayList<String>();
         if (isCheckedIngredient.size()>0)isCheckedIngredient.clear();
@@ -213,8 +219,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return ingredientsToReturn;
-    }
-    private void sendNotification() {
+    }*/
+    /*private void sendNotification() {
         String msgText = "Kupi namirnice";
         Intent notificationIntent = new Intent(this,MainActivity.class);
         notificationIntent.putExtra(INGREDIENTS_MESSAGE, msgText);
@@ -226,9 +232,10 @@ public class MainActivity extends AppCompatActivity
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setAutoCancel(true)
-                .setContentTitle("You have to buy:")
+                .setContentTitle("Grocery List")
                 .setContentText(msgText)
-                .setSmallIcon(android.R.drawable.ic_dialog_email)
+                .setSmallIcon(R.drawable.recipe)
+                .setColor(18210)
                 .setContentIntent(notificationPendingIntent)
                 .setLights(Color.BLUE, 2000, 1000)
                 .setVibrate(new long[]{1000,1000,1000,1000,1000})
@@ -237,7 +244,7 @@ public class MainActivity extends AppCompatActivity
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0,notification);
         this.finish();
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -274,21 +281,76 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.past_weeks) {
             todayMeal=false; todayGroceries=false; weekMeal=false; weekGroceries=false; pastWeekMeals=true;
             pastWeeksFunction();
-        } else if (id == R.id.facebook_post) {
-            //Post meal picture on Facebook
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(), FacebookShareActivity.class);
-            startActivity(intent);
+        } else if (id == R.id.camera) {
+            takePhoto();
         }else if (id == R.id.recipes) {
+            String weekNum=getWeekNum();
             Intent recipesIntent = new Intent();
             recipesIntent.setClass(getApplicationContext(), RecipesActivity.class);
+            recipesIntent.putExtra(WEEK_DAY, getDay());
+            recipesIntent.putExtra(WEEK_NUM, weekNum);
             startActivity(recipesIntent);
+        }else if (id == R.id.notification) {
+            Intent notificationIntent = new Intent();
+            notificationIntent.setClass(getApplicationContext(), NotificationActivity.class);
+            startActivity(notificationIntent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    private void takePhoto(){
+        String imageName=getRandomString();
+        Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        imagesFolder = Environment.getExternalStoragePublicDirectory("/MealPlanner");
+        File image = new File(imagesFolder, imageName + ".png");
+        uriSavedImage = Uri.fromFile(image);
+        imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+        startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                Toast.makeText(getApplicationContext(),"Image successfully saved!",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    private String getRandomString(){
+        String rndString="";
+        String randomLetters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random r = new Random();
+        for (int k=0;k<20;k++){
+            char c = randomLetters.charAt(r.nextInt(randomLetters.length()));
+            rndString += c;
+        }
+        return rndString;
+    }
+    private String getWeekNum(){
+        String weekNum = "";
+        if(meals.size()<1) weekNum = "1";
+        else {
+            String previousWeekNum = meals.get(meals.size() - 1).getmWeekNum();
+            Integer pwn = Integer.parseInt(previousWeekNum);
+            String previousFirstDay = meals.get(meals.size() - 1).getmWeekFirstDay();
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            Date firstDate = null;
+            try {
+                firstDate = format.parse(previousFirstDay);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar c = Calendar.getInstance();
+            Date todayDate = c.getTime();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(firstDate);
+            cal.add(Calendar.DATE, 7);
+            if (todayDate.compareTo(firstDate) >= 0 && todayDate.compareTo(cal.getTime()) < 0)
+                weekNum = previousWeekNum;
+            else weekNum = String.valueOf(Integer.parseInt(previousWeekNum) + 1);
+        }
+        return weekNum;
+    }
     private ArrayList<Meal> loadMeals(){ return DBHelper.getInstance(this).getAllMeals(); }
 
     private String getDay(){
@@ -624,6 +686,7 @@ public class MainActivity extends AppCompatActivity
     private void todayMeals(){
         fab.setVisibility(VISIBLE);
         final ArrayList<Meal> todayMeals = new ArrayList<Meal>();
+        if(todayMeals.size()>0) todayMeals.clear();
         String today = getDay();
         for(int i=0;i<meals.size();i++){
             if(meals.get(i).getmDay().equals(today)){
@@ -693,7 +756,7 @@ public class MainActivity extends AppCompatActivity
     private void updateExistingMeal(){
         Intent updatedMealIntent = this.getIntent();
         if(updatedMealIntent.hasExtra(UpdateMealActivity.UPDATE_FINISH)) {
-            notificationIsShown = true;
+            //notificationIsShown = true;
             meals = this.loadMeals();
         }
     }

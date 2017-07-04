@@ -122,12 +122,14 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
         this.bAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean comma = false;
                 Context context = getApplicationContext();
+
                 if(etMealName.getText().toString().matches("")){
                     Toast.makeText(context,"Nothing to add.", Toast.LENGTH_SHORT).show();
                 }else {
                     mealDay = daySpinner.getSelectedItem().toString();
-                    Toast.makeText(getApplicationContext(),mealDay,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),mealDay,Toast.LENGTH_LONG).show();
 
                     mealName = etMealName.getText().toString();
                     mealDifficulty = difficultySpinner.getSelectedItem().toString();
@@ -142,17 +144,23 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
                             mealIngredients += ","+ingredientsList.get(i).getText().toString();
                             mealIngredientsIsChecked += ","+"0";
                         }
+                        if(ingredientsList.get(i).getText().toString().contains(",")) comma = true;
                     }
-                    //Toast.makeText(getApplicationContext(),mealIngredients,Toast.LENGTH_LONG).show();
 
+                    if(comma) Toast.makeText(context,"Please do not write a comma in a list of ingredients.", Toast.LENGTH_SHORT).show();
+                    else{
                     //Monday date
                     Calendar calendar = Calendar.getInstance();
                     String thisDay = weekDay;
                     if(!thisDay.equals("Monday")){
                         if(thisDay.equals("Sunday")) calendar.add(Calendar.DATE, -6);
-                        else calendar.add(Calendar.DATE, -Calendar.DAY_OF_WEEK+2);
+                        else if(thisDay.equals("Saturday")) calendar.add(Calendar.DATE, -5);
+                        else if(thisDay.equals("Friday")) calendar.add(Calendar.DATE, -4);
+                        else if(thisDay.equals("Thursday")) calendar.add(Calendar.DATE, -3);
+                        else if(thisDay.equals("Wednesday")) calendar.add(Calendar.DATE, -2);
+                        else if(thisDay.equals("Tuesday")) calendar.add(Calendar.DATE, -1);
                     }
-                    else calendar.add(Calendar.DATE,0);
+                    else calendar.add(Calendar.DATE, 0);
                     SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
                     String formattedMondayDate = df.format(calendar.getTime());
 
@@ -168,6 +176,7 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
                     result.putExtra(MEAL_WEEK_NUM, weekNum);
                     result.putExtra(MEAL_FIRST_DAY, formattedMondayDate);
                     startActivity(result);
+                    }
                 }
             }
         });

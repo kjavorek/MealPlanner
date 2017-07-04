@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@drawable/background">
+    <RelativeLayout android:id="@+id/recipesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/background"
+        android:paddingLeft="@dimen/add_meal_l_r_padding"
+        android:paddingRight="@dimen/add_meal_l_r_padding">
+    <Button
+        android:id="@+id/bBack"
+        android:layout_width="45sp"
+        android:layout_height="45sp"
+        android:background="@drawable/arrow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+    <TextView
+        android:id="@+id/tvNotification"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/bBack"
+        android:textSize="@dimen/AddNameSize"
+        android:textStyle="bold"
+        android:paddingTop="@dimen/nameTBPadding"
+        android:paddingBottom="@dimen/nameTBPadding"
+        android:paddingLeft="@dimen/item_lPadding"
+        android:paddingRight="@dimen/item_rPadding"
+        android:textColor="@color/white"
+        android:text="@string/notification_tv" />
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNotification">
+    </TimePicker>
+    <Button
+        android:id="@+id/btnNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timePicker"
+        android:textColor="@color/dark_purple"
+        android:textSize="@dimen/NameSize"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/notification_T_margin"
+        android:text="@string/notification_btn" />
+</RelativeLayout>
+</ScrollView>
