@@ -60,8 +60,8 @@ public class NotificationReceiver extends BroadcastReceiver{
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.recipe)
-                .setColor(18210)
+                .setSmallIcon(R.drawable.muffin)
+                .setColor(10388124)
                 .setContentTitle("Grocery List")
                 .setContentText(msgText)
                 .setSound(alarmSound)

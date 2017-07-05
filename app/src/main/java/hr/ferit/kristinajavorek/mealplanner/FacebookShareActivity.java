@@ -24,47 +24,29 @@ import java.util.List;
 public class FacebookShareActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
-    private LoginManager manager;
+    private LoginManager loginManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
-
-        /*Bitmap image = ...
-        SharePhoto photo = new SharePhoto.Builder()
-                .setBitmap(image)
-                .build();
-        SharePhotoContent content = new SharePhotoContent.Builder()
-                .addPhoto(photo)
-                .build();*/
-
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_facebook_share);
-
             FacebookSdk.sdkInitialize(getApplicationContext());
-
             callbackManager = CallbackManager.Factory.create();
-
-            List<String> permissionNeeds = Arrays.asList("publish_actions");
-
-            //this loginManager helps you eliminate adding a LoginButton to your UI
-            manager = LoginManager.getInstance();
-
-            manager.logInWithPublishPermissions(this, permissionNeeds);
-
-            manager.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
+            List<String> permissionNeeds = Arrays.asList("Publish");
+            loginManager = LoginManager.getInstance();
+            loginManager.logInWithPublishPermissions(this, permissionNeeds);
+            loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
             {
                 @Override
                 public void onSuccess(LoginResult loginResult)
                 {
                     sharePhotoToFacebook();
                 }
-
                 @Override
                 public void onCancel()
                 {
                     System.out.println("onCancel");
                 }
-
                 @Override
                 public void onError(FacebookException exception)
                 {
@@ -74,18 +56,15 @@ public class FacebookShareActivity extends AppCompatActivity {
         }
 
     private void sharePhotoToFacebook(){
-        Bitmap image = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.breakfast);
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(image)
-                .setCaption("Caption")
+                .setCaption("Meal")
                 .build();
-
         SharePhotoContent content = new SharePhotoContent.Builder()
                 .addPhoto(photo)
                 .build();
-
         ShareApi.share(content, null);
-
     }
 
     @Override

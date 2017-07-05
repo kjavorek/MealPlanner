@@ -44,7 +44,7 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
     String mealDay, mealName, mealDifficulty, mealTime, mealIngredients = "", mealIngredientsIsChecked = "", mealDirections = "", weekDay, weekNum;
     Integer etId = 0;
     Spinner daySpinner, difficultySpinner, timeSpinner;
-    String title="", link="", ingredientsString="";
+    String title="", link="", ingredientsString="", difficulty="", time="";
     ArrayList<String> recipesIngredients = new ArrayList<String>();
 
     @Override
@@ -83,6 +83,13 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
             link = addMealIntent.getStringExtra(RecipesActivity.LINK);
             ingredientsString = addMealIntent.getStringExtra(RecipesActivity.INGREDIENTS);
         }
+        if(addMealIntent.hasExtra(MainActivity.PAST_TITLE)){
+            title = addMealIntent.getStringExtra(MainActivity.PAST_TITLE);
+            difficulty = addMealIntent.getStringExtra(MainActivity.PAST_DIFFICULTY);
+            time = addMealIntent.getStringExtra(MainActivity.PAST_TIME);
+            ingredientsString = addedMealIntent.getStringExtra(MainActivity.PAST_INGREDIENTS);
+            link = addedMealIntent.getStringExtra(MainActivity.PAST_DIRECTIONS);
+        }
 
         this.etMealName = (EditText) findViewById(R.id.etAddMealName);
         if(title!="") this.etMealName.setText(title);
@@ -90,11 +97,19 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
         this.difficultySpinner = (Spinner)findViewById(R.id.difficultySpinner);
         ArrayAdapter<CharSequence> difficultyAdapter = ArrayAdapter.createFromResource(this, R.array.difficulty, android.R.layout.simple_spinner_dropdown_item);
         difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (!difficulty.equals(null) || !difficulty.equals("")) {
+            int spinnerDifficultyPosition = difficultyAdapter.getPosition(difficulty);
+            difficultySpinner.setSelection(spinnerDifficultyPosition);
+        }
         difficultySpinner.setAdapter(difficultyAdapter);
 
         this.timeSpinner = (Spinner)findViewById(R.id.timeSpinner);
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(this, R.array.time, android.R.layout.simple_spinner_dropdown_item);
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (!time.equals(null) || !time.equals("")) {
+            int spinnerTimePosition = timeAdapter.getPosition(time);
+            timeSpinner.setSelection(spinnerTimePosition);
+        }
         timeSpinner.setAdapter(timeAdapter);
 
         this.tvAddIngredients= (TextView) findViewById(R.id.tvAddIngredients);

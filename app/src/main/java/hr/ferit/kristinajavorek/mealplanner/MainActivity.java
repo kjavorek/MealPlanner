@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
@@ -18,6 +19,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -84,6 +86,11 @@ public class MainActivity extends AppCompatActivity
     public static final String INGREDIENTS_MESSAGE= "message";
     public static final String PAST_WEEK = "pastWeek";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 0;
+    public static final String PAST_TITLE = "Title";
+    public static final String PAST_DIFFICULTY = "Difficulty";
+    public static final String PAST_TIME= "Time";
+    public static final String PAST_INGREDIENTS = "Ingredients";
+    public static final String PAST_DIRECTIONS = "Directions";
 
     ListView lvMealList;
     String mealDay, mealName, mealDifficulty, mealTime, mealIngredients, mealIngredientsIsChecked, mealDirections, mealWeekNum, mealWeekFirstDay;
@@ -149,6 +156,9 @@ public class MainActivity extends AppCompatActivity
             mealDirections = mealIntent.getStringExtra(AddMealActivity.MEAL_DIRECTIONS);
             mealWeekNum = mealIntent.getStringExtra(AddMealActivity.MEAL_WEEK_NUM);
             mealWeekFirstDay = mealIntent.getStringExtra(AddMealActivity.MEAL_FIRST_DAY);
+            //mealWeekNum="1";
+            //mealWeekFirstDay="26-06-2017";
+
             Meal meal = new Meal(7, mealDay, mealName, mealDifficulty, mealTime, mealIngredients, mealIngredientsIsChecked, mealDirections, mealWeekNum, mealWeekFirstDay);
             long id = DBHelper.getInstance(getApplicationContext()).insertMeal(meal);
             meal.setmId((int)id);
@@ -730,28 +740,70 @@ public class MainActivity extends AppCompatActivity
                     if(todayMeal || weekMeal) {
                         if(weekMeal && weekMealsAdapter.getItem(position).equals(1)) {}
                         else {
+                            AlertDialog diaBox = AskOption(position);
+                            diaBox.show();
+                        }
+                        return true;
+                    }
+                    else if(pastWeekMeals){
+                        if(weekMealsAdapter.getItem(position).equals(1)) {}
+                        else {
                             Meal meal;
-                            Adapter dayAdapter;
-                            WeekMealsAdapter weekAdapter;
-                            if (todayMeal) meal = (Meal) mealAdapter.getItem(position);
-                            else meal = (Meal) weekMealsAdapter.getItem(position);
-                            int mId = meal.getmId();
-                            DBHelper.getInstance(getApplicationContext()).deleteMeal(mId);
-                            meals = loadMeals();
-                            if(todayMeal) {
-                                dayAdapter = (Adapter) lvMealList.getAdapter();
-                                dayAdapter.deleteAt(position);
-                            }
-                            else {
-                                deleteWeekMeal = true;
-                                weekMeals();
-                            }
+                            meal = (Meal) weekMealsAdapter.getItem(position);
+                            String weekNum=getWeekNum();
+
+                            Intent addIntent = new Intent();
+                            addIntent.setClass(getApplicationContext(), AddMealActivity.class);
+                            addIntent.putExtra(PAST_TITLE, meal.getmName());
+                            addIntent.putExtra(PAST_DIFFICULTY, meal.getmDifficulty());
+                            addIntent.putExtra(PAST_TIME, meal.getmTime());
+                            addIntent.putExtra(PAST_INGREDIENTS, meal.getmIngredients());
+                            addIntent.putExtra(PAST_DIRECTIONS, meal.getmDirections());
+                            addIntent.putExtra(WEEK_DAY, getDay());
+                            addIntent.putExtra(WEEK_NUM, weekNum);
+                            startActivity(addIntent);
                         }
                         return true;
                     }
                     else return false;
                 }
             });
+    }
+    private AlertDialog AskOption(final int position)
+    {
+        AlertDialog myQuittingDialogBox =new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Do you want to DELETE this meal?")
+                .setIcon(R.drawable.delete)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Meal meal;
+                        Adapter dayAdapter;
+                        WeekMealsAdapter weekAdapter;
+                        if (todayMeal) meal = (Meal) mealAdapter.getItem(position);
+                        else meal = (Meal) weekMealsAdapter.getItem(position);
+                        int mId = meal.getmId();
+                        DBHelper.getInstance(getApplicationContext()).deleteMeal(mId);
+                        meals = loadMeals();
+                        if(todayMeal) {
+                            dayAdapter = (Adapter) lvMealList.getAdapter();
+                            dayAdapter.deleteAt(position);
+                        }
+                        else {
+                            deleteWeekMeal = true;
+                            weekMeals();
+                        }
+                        dialog.dismiss();
+                    }
+
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        return myQuittingDialogBox;
     }
     private void updateExistingMeal(){
         Intent updatedMealIntent = this.getIntent();
