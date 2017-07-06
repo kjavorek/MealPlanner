@@ -10,6 +10,7 @@
             android:id="@+id/today_groceries"
             android:icon="@drawable/today_groceries"
             android:title="Today groceries" />
+        <!--http://www.freeiconspng.com/img/25357-->
         <item
             android:id="@+id/week_meals"
             android:icon="@drawable/week"
@@ -18,6 +19,7 @@
             android:id="@+id/week_groceries"
             android:icon="@drawable/week_groceries"
             android:title="Week groceries" />
+        <!--http://www.freeiconspng.com/img/25357-->
         <item
             android:id="@+id/past_weeks"
             android:icon="@drawable/past_weeks"
