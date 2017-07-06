@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     File imagesFolder;
     Uri uriSavedImage;
     int alarmHour, alarmMinute;
+    File image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,13 +292,19 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.past_weeks) {
             todayMeal=false; todayGroceries=false; weekMeal=false; weekGroceries=false; pastWeekMeals=true;
             pastWeeksFunction();
-        } else if (id == R.id.camera) {
-            takePhoto();
         } else if (id == R.id.facebook) {
             //For sharing on facebook
-            Intent facebookIntent = new Intent();
+            /*Intent facebookIntent = new Intent();
             facebookIntent.setClass(getApplicationContext(), FacebookShareActivity.class);
-            startActivity(facebookIntent);
+            startActivity(facebookIntent);*/
+        } else if (id == R.id.whatsapp) {
+            String imageName=getRandomString();
+            Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            imagesFolder = Environment.getExternalStoragePublicDirectory("/MealPlanner");
+            image = new File(imagesFolder, imageName + ".png");
+            uriSavedImage = Uri.fromFile(image);
+            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+            startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }else if (id == R.id.recipes) {
             String weekNum=getWeekNum();
             Intent recipesIntent = new Intent();
@@ -314,20 +321,24 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    private void takePhoto(){
-        String imageName=getRandomString();
-        Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        imagesFolder = Environment.getExternalStoragePublicDirectory("/MealPlanner");
-        File image = new File(imagesFolder, imageName + ".png");
-        uriSavedImage = Uri.fromFile(image);
-        imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-        startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
-                Toast.makeText(getApplicationContext(),"Image successfully saved!",Toast.LENGTH_LONG).show();
+                Uri imageUri = Uri.parse(image.getAbsolutePath());
+                Intent whatsappIntent = new Intent();
+                whatsappIntent.setAction(Intent.ACTION_SEND);
+                whatsappIntent.setPackage("com.whatsapp");
+                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "This is a photo of my meal :)");
+                whatsappIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                whatsappIntent.setType("image/jpeg");
+                whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    startActivity(whatsappIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(getApplicationContext(), "WhatsApp have not been installed.", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

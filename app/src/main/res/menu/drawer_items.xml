@@ -25,10 +25,6 @@
             android:icon="@drawable/past_weeks"
             android:title="Past weeks" />
         <item
-            android:id="@+id/camera"
-            android:icon="@drawable/camera"
-            android:title="Take a meal photo" />
-        <item
             android:id="@+id/recipes"
             android:icon="@drawable/recipes"
             android:title="Recipes" />
@@ -36,6 +32,10 @@
             android:id="@+id/notification"
             android:icon="@drawable/notification"
             android:title="Daily reminder" />
+        <item
+            android:id="@+id/whatsapp"
+            android:icon="@drawable/whatsapp"
+            android:title="Share on WhatsApp" />
         <item
             android:id="@+id/facebook"
             android:icon="@drawable/facebook"

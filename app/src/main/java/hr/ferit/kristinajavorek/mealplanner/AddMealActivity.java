@@ -58,6 +58,7 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
         this.ingredientsList = new ArrayList<EditText>();
 
         this.daySpinner = (Spinner) findViewById(R.id.daySpinner);
+        
         Intent addedMealIntent = this.getIntent();
         if(addedMealIntent.hasExtra(MainActivity.TODAY)){
             mealDay = addedMealIntent.getStringExtra(MainActivity.TODAY);
@@ -76,17 +77,15 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
             weekDay = addedMealIntent.getStringExtra(MainActivity.WEEK_DAY);
             weekNum = addedMealIntent.getStringExtra(MainActivity.WEEK_NUM);
         }
-
-        Intent addMealIntent = this.getIntent();
-        if(addMealIntent.hasExtra(RecipesActivity.TITLE)) {
-            title = addMealIntent.getStringExtra(RecipesActivity.TITLE);
-            link = addMealIntent.getStringExtra(RecipesActivity.LINK);
-            ingredientsString = addMealIntent.getStringExtra(RecipesActivity.INGREDIENTS);
+        if(addedMealIntent.hasExtra(RecipesActivity.TITLE)) {
+            title = addedMealIntent.getStringExtra(RecipesActivity.TITLE);
+            link = addedMealIntent.getStringExtra(RecipesActivity.LINK);
+            ingredientsString = addedMealIntent.getStringExtra(RecipesActivity.INGREDIENTS);
         }
-        if(addMealIntent.hasExtra(MainActivity.PAST_TITLE)){
-            title = addMealIntent.getStringExtra(MainActivity.PAST_TITLE);
-            difficulty = addMealIntent.getStringExtra(MainActivity.PAST_DIFFICULTY);
-            time = addMealIntent.getStringExtra(MainActivity.PAST_TIME);
+        else if(addedMealIntent.hasExtra(MainActivity.PAST_TITLE)){
+            title = addedMealIntent.getStringExtra(MainActivity.PAST_TITLE);
+            difficulty = addedMealIntent.getStringExtra(MainActivity.PAST_DIFFICULTY);
+            time = addedMealIntent.getStringExtra(MainActivity.PAST_TIME);
             ingredientsString = addedMealIntent.getStringExtra(MainActivity.PAST_INGREDIENTS);
             link = addedMealIntent.getStringExtra(MainActivity.PAST_DIRECTIONS);
         }
