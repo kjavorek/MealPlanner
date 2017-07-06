@@ -293,6 +293,11 @@ public class MainActivity extends AppCompatActivity
             pastWeeksFunction();
         } else if (id == R.id.camera) {
             takePhoto();
+        } else if (id == R.id.facebook) {
+            //For sharing on facebook
+            Intent facebookIntent = new Intent();
+            facebookIntent.setClass(getApplicationContext(), FacebookShareActivity.class);
+            startActivity(facebookIntent);
         }else if (id == R.id.recipes) {
             String weekNum=getWeekNum();
             Intent recipesIntent = new Intent();

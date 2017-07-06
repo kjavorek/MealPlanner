@@ -34,6 +34,10 @@
             android:id="@+id/notification"
             android:icon="@drawable/notification"
             android:title="Daily reminder" />
+        <item
+            android:id="@+id/facebook"
+            android:icon="@drawable/facebook"
+            android:title="Facebook" />
     </group>
 
 </menu>
