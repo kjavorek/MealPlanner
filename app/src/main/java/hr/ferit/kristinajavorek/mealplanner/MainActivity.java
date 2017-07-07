@@ -157,8 +157,6 @@ public class MainActivity extends AppCompatActivity
             mealDirections = mealIntent.getStringExtra(AddMealActivity.MEAL_DIRECTIONS);
             mealWeekNum = mealIntent.getStringExtra(AddMealActivity.MEAL_WEEK_NUM);
             mealWeekFirstDay = mealIntent.getStringExtra(AddMealActivity.MEAL_FIRST_DAY);
-            //mealWeekNum="1";
-            //mealWeekFirstDay="26-06-2017";
 
             Meal meal = new Meal(7, mealDay, mealName, mealDifficulty, mealTime, mealIngredients, mealIngredientsIsChecked, mealDirections, mealWeekNum, mealWeekFirstDay);
             long id = DBHelper.getInstance(getApplicationContext()).insertMeal(meal);
@@ -199,63 +197,10 @@ public class MainActivity extends AppCompatActivity
         //Notification alarm - intent
         if(mealIntent.hasExtra(NotificationReceiver.NOTIFICATION))
         {
-            //notificationIsShown = true;
             todayGroceriesFunction();
         }
         else todayMeals();
-        /*if(!notificationIsShown && allTodayGroceries()!="") {
-            notificationIsShown = true;
-            sendNotification();
-        }*/
     }
-
-    /*private String allTodayGroceries(){
-        ingredientsToReturn="";
-        List<String> isCheckedIngredient=new ArrayList<String>(), ingredient=new ArrayList<String>();
-        if (isCheckedIngredient.size()>0)isCheckedIngredient.clear();
-        if(ingredient.size()>0)ingredient.clear();
-        today = getDay();
-        for(int i=0;i<meals.size();i++){
-            if(meals.get(i).getmDay().equals(today) && checkWeek(i)){
-                if(meals.get(i).getmIngredientsIsChecked().contains("0")){
-                    isCheckedIngredient = Arrays.asList(meals.get(i).getmIngredientsIsChecked().split("\\s*,\\s*"));
-                    ingredient = Arrays.asList(meals.get(i).getmIngredients().split("\\s*,\\s*"));
-                    for(int j=0;j<isCheckedIngredient.size();j++){
-                        if(isCheckedIngredient.get(j).equals("0")){
-                            if(ingredientsToReturn.equals("")) ingredientsToReturn = ingredient.get(j);
-                            else ingredientsToReturn += ", " + ingredient.get(j);
-                        }
-                    }
-                }
-            }
-        }
-        return ingredientsToReturn;
-    }*/
-    /*private void sendNotification() {
-        String msgText = "Kupi namirnice";
-        Intent notificationIntent = new Intent(this,MainActivity.class);
-        notificationIntent.putExtra(INGREDIENTS_MESSAGE, msgText);
-        notificationIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivity(notificationIntent);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        msgText = allTodayGroceries();
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setAutoCancel(true)
-                .setContentTitle("Grocery List")
-                .setContentText(msgText)
-                .setSmallIcon(R.drawable.recipe)
-                .setColor(18210)
-                .setContentIntent(notificationPendingIntent)
-                .setLights(Color.BLUE, 2000, 1000)
-                .setVibrate(new long[]{1000,1000,1000,1000,1000})
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        Notification notification = notificationBuilder.build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0,notification);
-        this.finish();
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -276,35 +221,23 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.today_meals) {
             todayMeal=true; todayGroceries=false; weekMeal=false; weekGroceries=false; pastWeekMeals=false;
             todayMeals();
-            //Toast.makeText(getApplicationContext(),"today_meals", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.today_groceries) {
             todayMeal=false; todayGroceries=true; weekMeal=false; weekGroceries=false; pastWeekMeals=false;
             todayGroceriesFunction();
-            //Toast.makeText(getApplicationContext(),"today_groceries", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.week_meals) {
             todayMeal=false; todayGroceries=false; weekMeal=true; weekGroceries=false; pastWeekMeals=false;
             weekMeals();
-            //Toast.makeText(getApplicationContext(),"week_meals", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.week_groceries) {
             todayMeal=false; todayGroceries=false; weekMeal=false; weekGroceries=true; pastWeekMeals=false;
             weekGroceriesFunction();
-            //Toast.makeText(getApplicationContext(),"week_groceries", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.past_weeks) {
             todayMeal=false; todayGroceries=false; weekMeal=false; weekGroceries=false; pastWeekMeals=true;
             pastWeeksFunction();
-        } else if (id == R.id.facebook) {
+        /*} else if (id == R.id.facebook) {
             //For sharing on facebook
-            /*Intent facebookIntent = new Intent();
+            Intent facebookIntent = new Intent();
             facebookIntent.setClass(getApplicationContext(), FacebookShareActivity.class);
             startActivity(facebookIntent);*/
-        } else if (id == R.id.whatsapp) {
-            String imageName=getRandomString();
-            Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            imagesFolder = Environment.getExternalStoragePublicDirectory("/MealPlanner");
-            image = new File(imagesFolder, imageName + ".png");
-            uriSavedImage = Uri.fromFile(image);
-            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-            startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }else if (id == R.id.recipes) {
             String weekNum=getWeekNum();
             Intent recipesIntent = new Intent();
@@ -316,6 +249,14 @@ public class MainActivity extends AppCompatActivity
             Intent notificationIntent = new Intent();
             notificationIntent.setClass(getApplicationContext(), NotificationActivity.class);
             startActivity(notificationIntent);
+        }else if (id == R.id.whatsapp) {
+            String imageName=getRandomString();
+            Intent imageIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            imagesFolder = Environment.getExternalStoragePublicDirectory("/MealPlanner");
+            image = new File(imagesFolder, imageName + ".png");
+            uriSavedImage = Uri.fromFile(image);
+            imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+            startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -535,7 +476,6 @@ public class MainActivity extends AppCompatActivity
     List<String> groceriesList = new ArrayList<String>();
     List<String> weekMealsList = new ArrayList<String>();
     List<Integer> mealNameList = new ArrayList<Integer>();
-    //List<Integer> mealNameWeekList = new ArrayList<Integer>();
     List<Integer> mealWeekDayList = new ArrayList<Integer>();
     List<Integer> mealInMealsList = new ArrayList<Integer>();
     List<String> isChecked = new ArrayList<String>();
@@ -824,7 +764,6 @@ public class MainActivity extends AppCompatActivity
     private void updateExistingMeal(){
         Intent updatedMealIntent = this.getIntent();
         if(updatedMealIntent.hasExtra(UpdateMealActivity.UPDATE_FINISH)) {
-            //notificationIsShown = true;
             meals = this.loadMeals();
         }
     }

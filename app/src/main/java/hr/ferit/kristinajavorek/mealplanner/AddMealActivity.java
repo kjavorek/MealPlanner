@@ -58,7 +58,7 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
         this.ingredientsList = new ArrayList<EditText>();
 
         this.daySpinner = (Spinner) findViewById(R.id.daySpinner);
-        
+
         Intent addedMealIntent = this.getIntent();
         if(addedMealIntent.hasExtra(MainActivity.TODAY)){
             mealDay = addedMealIntent.getStringExtra(MainActivity.TODAY);

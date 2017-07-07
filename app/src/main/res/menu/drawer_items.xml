@@ -36,10 +36,10 @@
             android:id="@+id/whatsapp"
             android:icon="@drawable/whatsapp"
             android:title="Share on WhatsApp" />
-        <item
+        <!--<item
             android:id="@+id/facebook"
             android:icon="@drawable/facebook"
-            android:title="Facebook" />
+            android:title="Facebook" />-->
     </group>
 
 </menu>
