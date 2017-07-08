@@ -17,7 +17,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddMealActivity extends AppCompatActivity implements View.OnLongClickListener {
@@ -29,14 +33,19 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
     public static final String MEAL_INGREDIENTS = "Ingredients";
     public static final String MEAL_INGREDIENTS_ISCHECKED = "IngredientsIsChecked";
     public static final String MEAL_DIRECTIONS = "Directions";
+    public static final String MEAL_WEEK_NUM = "Week number";
+    public static final String MEAL_FIRST_DAY = "Monday";
+
     LinearLayout activity_add_meal;
     EditText etMealName, etIngredients, etMealDirections;
     List<EditText> ingredientsList;
     TextView tvAddIngredients;
     Button bAddMeal;
-    String mealDay, mealName, mealDifficulty, mealTime, mealIngredients = "", mealIngredientsIsChecked = "", mealDirections = "";
+    String mealDay, mealName, mealDifficulty, mealTime, mealIngredients = "", mealIngredientsIsChecked = "", mealDirections = "", weekDay, weekNum;
     Integer etId = 0;
     Spinner daySpinner, difficultySpinner, timeSpinner;
+    String title="", link="", ingredientsString="", difficulty="", time="";
+    ArrayList<String> recipesIngredients = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,7 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
         this.ingredientsList = new ArrayList<EditText>();
 
         this.daySpinner = (Spinner) findViewById(R.id.daySpinner);
+
         Intent addedMealIntent = this.getIntent();
         if(addedMealIntent.hasExtra(MainActivity.TODAY)){
             mealDay = addedMealIntent.getStringExtra(MainActivity.TODAY);
@@ -63,31 +73,77 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
             daysAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             daySpinner.setAdapter(daysAdapter);
         }
+        if(addedMealIntent.hasExtra(MainActivity.WEEK_DAY)){
+            weekDay = addedMealIntent.getStringExtra(MainActivity.WEEK_DAY);
+            weekNum = addedMealIntent.getStringExtra(MainActivity.WEEK_NUM);
+        }
+        if(addedMealIntent.hasExtra(RecipesActivity.TITLE)) {
+            title = addedMealIntent.getStringExtra(RecipesActivity.TITLE);
+            link = addedMealIntent.getStringExtra(RecipesActivity.LINK);
+            ingredientsString = addedMealIntent.getStringExtra(RecipesActivity.INGREDIENTS);
+        }
+        else if(addedMealIntent.hasExtra(MainActivity.PAST_TITLE)){
+            title = addedMealIntent.getStringExtra(MainActivity.PAST_TITLE);
+            difficulty = addedMealIntent.getStringExtra(MainActivity.PAST_DIFFICULTY);
+            time = addedMealIntent.getStringExtra(MainActivity.PAST_TIME);
+            ingredientsString = addedMealIntent.getStringExtra(MainActivity.PAST_INGREDIENTS);
+            link = addedMealIntent.getStringExtra(MainActivity.PAST_DIRECTIONS);
+        }
 
         this.etMealName = (EditText) findViewById(R.id.etAddMealName);
+        if(title!="") this.etMealName.setText(title);
 
         this.difficultySpinner = (Spinner)findViewById(R.id.difficultySpinner);
         ArrayAdapter<CharSequence> difficultyAdapter = ArrayAdapter.createFromResource(this, R.array.difficulty, android.R.layout.simple_spinner_dropdown_item);
         difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (!difficulty.equals(null) || !difficulty.equals("")) {
+            int spinnerDifficultyPosition = difficultyAdapter.getPosition(difficulty);
+            difficultySpinner.setSelection(spinnerDifficultyPosition);
+        }
         difficultySpinner.setAdapter(difficultyAdapter);
 
         this.timeSpinner = (Spinner)findViewById(R.id.timeSpinner);
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(this, R.array.time, android.R.layout.simple_spinner_dropdown_item);
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (!time.equals(null) || !time.equals("")) {
+            int spinnerTimePosition = timeAdapter.getPosition(time);
+            timeSpinner.setSelection(spinnerTimePosition);
+        }
         timeSpinner.setAdapter(timeAdapter);
 
         this.tvAddIngredients= (TextView) findViewById(R.id.tvAddIngredients);
+        recipesIngredients.addAll(Arrays.asList(ingredientsString.split("\\s*,\\s*")));
+        for(int i=0;i<recipesIngredients.size();i++) {
+            activity_add_meal = (LinearLayout) findViewById(R.id.activity_add_meal);
+            etIngredients = new EditText(this);
+            ingredientsList.add(etIngredients);
+            etIngredients.setId(etId);
+            etIngredients.setHint("Add ingredient");
+            etIngredients.setHintTextColor(Color.rgb(85, 85, 85));
+            etIngredients.setText(recipesIngredients.get(i));
+            etIngredients.setTextColor(Color.WHITE);
+            etIngredients.setPadding(30, 2, 2, 15);
+            etIngredients.setMaxLines(1);
+            etIngredients.setOnLongClickListener(this);
+            etIngredients.requestFocus();
+            activity_add_meal.addView(etIngredients, 6 + etId);
+            etId++;
+        }
+
         this.etMealDirections= (EditText) findViewById(R.id.etMealDirections);
+        if(link!="") this.etMealDirections.setText(link);
         this.bAddMeal = (Button) findViewById(R.id.bAddMeal);
         this.bAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean comma = false;
                 Context context = getApplicationContext();
+
                 if(etMealName.getText().toString().matches("")){
                     Toast.makeText(context,"Nothing to add.", Toast.LENGTH_SHORT).show();
                 }else {
                     mealDay = daySpinner.getSelectedItem().toString();
-                    Toast.makeText(getApplicationContext(),mealDay,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),mealDay,Toast.LENGTH_LONG).show();
 
                     mealName = etMealName.getText().toString();
                     mealDifficulty = difficultySpinner.getSelectedItem().toString();
@@ -102,8 +158,25 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
                             mealIngredients += ","+ingredientsList.get(i).getText().toString();
                             mealIngredientsIsChecked += ","+"0";
                         }
+                        if(ingredientsList.get(i).getText().toString().contains(",")) comma = true;
                     }
-                    Toast.makeText(getApplicationContext(),mealIngredients,Toast.LENGTH_LONG).show();
+
+                    if(comma) Toast.makeText(context,"Please do not write a comma in a list of ingredients.", Toast.LENGTH_SHORT).show();
+                    else{
+                    //Monday date
+                    Calendar calendar = Calendar.getInstance();
+                    String thisDay = weekDay;
+                    if(!thisDay.equals("Monday")){
+                        if(thisDay.equals("Sunday")) calendar.add(Calendar.DATE, -6);
+                        else if(thisDay.equals("Saturday")) calendar.add(Calendar.DATE, -5);
+                        else if(thisDay.equals("Friday")) calendar.add(Calendar.DATE, -4);
+                        else if(thisDay.equals("Thursday")) calendar.add(Calendar.DATE, -3);
+                        else if(thisDay.equals("Wednesday")) calendar.add(Calendar.DATE, -2);
+                        else if(thisDay.equals("Tuesday")) calendar.add(Calendar.DATE, -1);
+                    }
+                    else calendar.add(Calendar.DATE, 0);
+                    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                    String formattedMondayDate = df.format(calendar.getTime());
 
                     Intent result = new Intent();
                     result.setClass(getApplicationContext(), MainActivity.class);
@@ -114,7 +187,10 @@ public class AddMealActivity extends AppCompatActivity implements View.OnLongCli
                     result.putExtra(MEAL_INGREDIENTS, mealIngredients);
                     result.putExtra(MEAL_INGREDIENTS_ISCHECKED, mealIngredientsIsChecked);
                     result.putExtra(MEAL_DIRECTIONS, mealDirections);
+                    result.putExtra(MEAL_WEEK_NUM, weekNum);
+                    result.putExtra(MEAL_FIRST_DAY, formattedMondayDate);
                     startActivity(result);
+                    }
                 }
             }
         });

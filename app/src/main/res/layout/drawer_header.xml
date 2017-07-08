@@ -30,5 +30,5 @@
         android:paddingLeft="@dimen/nav_left_padding"
         android:layout_alignParentRight="true"
         app:srcCompat="@drawable/health" />
-
+        <!--http://www.freepngimg.com/png/17894-vegetable-png-clipart-->
 </RelativeLayout>

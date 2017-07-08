@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/layoutHeight"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvRecipes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/NameSize"
+        android:paddingTop="@dimen/recipes_T_B_padding"
+        android:paddingLeft="@dimen/item_lPadding"
+        android:paddingRight="@dimen/item_rPadding"
+        android:textColor="@color/white"
+        android:paddingBottom="@dimen/recipes_T_B_padding"/>
+</LinearLayout>

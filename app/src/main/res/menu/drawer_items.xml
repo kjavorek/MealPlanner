@@ -10,6 +10,7 @@
             android:id="@+id/today_groceries"
             android:icon="@drawable/today_groceries"
             android:title="Today groceries" />
+        <!--http://www.freeiconspng.com/img/25357-->
         <item
             android:id="@+id/week_meals"
             android:icon="@drawable/week"
@@ -18,6 +19,27 @@
             android:id="@+id/week_groceries"
             android:icon="@drawable/week_groceries"
             android:title="Week groceries" />
+        <!--http://www.freeiconspng.com/img/25357-->
+        <item
+            android:id="@+id/past_weeks"
+            android:icon="@drawable/past_weeks"
+            android:title="Past weeks" />
+        <item
+            android:id="@+id/recipes"
+            android:icon="@drawable/recipes"
+            android:title="Recipes" />
+        <item
+            android:id="@+id/notification"
+            android:icon="@drawable/notification"
+            android:title="Daily reminder" />
+        <item
+            android:id="@+id/whatsapp"
+            android:icon="@drawable/whatsapp"
+            android:title="Share on WhatsApp" />
+        <!--<item
+            android:id="@+id/facebook"
+            android:icon="@drawable/facebook"
+            android:title="Facebook" />-->
     </group>
 
 </menu>

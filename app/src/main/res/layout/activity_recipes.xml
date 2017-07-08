@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/recipesLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/background">
+    <Button
+        android:id="@+id/bBackRecipes"
+        android:layout_width="45sp"
+        android:layout_height="45sp"
+        android:background="@drawable/arrow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+    <TextView android:id="@+id/recipes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/bBackRecipes"
+        android:text="Recipes"
+        android:textSize="@dimen/AddNameSize"
+        android:textStyle="bold"
+        android:paddingTop="@dimen/nameTBPadding"
+        android:paddingBottom="@dimen/nameTBPadding"
+        android:paddingLeft="@dimen/item_lPadding"
+        android:paddingRight="@dimen/item_rPadding"
+        android:textColor="@color/white"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeContainer"
+        android:layout_below="@id/recipes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10sp">
+        <ListView android:id="@+id/mylistview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="@dimen/dividerHeight">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</RelativeLayout>

@@ -8,7 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!--Drawer-->
-    <dimen name="design_navigation_icon_size" tools:override="true">52sp</dimen>
+    <dimen name="design_navigation_icon_size" tools:override="true">50sp</dimen>
     <dimen name="nav_padding">58sp</dimen>
     <dimen name="nav_left_padding">90sp</dimen>
     <dimen name="dividerHeight">5sp</dimen>
@@ -38,5 +38,7 @@
     <dimen name="ingredientsListHeight">55sp</dimen>
     <dimen name="ingredientsListTopPadding">15sp</dimen>
     <dimen name="ingredientListTextSize">16sp</dimen>
+    <dimen name="recipes_T_B_padding">21sp</dimen>
+    <dimen name="notification_T_margin">14sp</dimen>
 
 </resources>
